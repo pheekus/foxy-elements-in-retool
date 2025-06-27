@@ -22,15 +22,15 @@ function useRetoolProxy(
   [_, setRequest]: RetoolStateObject,
   triggerQuery: () => void
 ) {
-  const getState = useRef<'idle' | 'preparing' | 'loading'>('idle')
-  const getQueue = useRef<QueuedRequest[]>(null as unknown as QueuedRequest[])
-  getQueue.current = getQueue.current ?? []
+  const state = useRef<'idle' | 'preparing' | 'loading'>('idle')
+  const queue = useRef<QueuedRequest[]>(null as unknown as QueuedRequest[])
+  queue.current = queue.current ?? []
 
   const processQueue = async () => {
-    if (getQueue.current.length > 0 && getState.current === 'idle') {
-      getState.current = 'preparing'
-      const body = await getQueue.current[0].request.text()
-      const url = getQueue.current[0].request.url
+    if (queue.current.length > 0 && state.current === 'idle') {
+      state.current = 'preparing'
+      const body = await queue.current[0].request.text()
+      const url = queue.current[0].request.url
       setRequest({ body, url })
       triggerQuery()
     }
@@ -38,9 +38,9 @@ function useRetoolProxy(
 
   useEffect(() => {
     if (query) {
-      if (getState.current === 'preparing') {
-        if (query.isFetching) getState.current = 'loading'
-      } else if (getState.current === 'loading') {
+      if (state.current === 'preparing') {
+        if (query.isFetching) state.current = 'loading'
+      } else if (state.current === 'loading') {
         if (!query.isFetching) {
           let status: number
           let body: string
@@ -53,9 +53,9 @@ function useRetoolProxy(
             body = JSON.stringify((query.data as { data: unknown }).data)
           }
 
-          getQueue.current[0].resolve(new Response(body, { status }))
-          getQueue.current.shift()
-          getState.current = 'idle'
+          queue.current[0].resolve(new Response(body, { status }))
+          queue.current.shift()
+          state.current = 'idle'
           processQueue()
         }
       }
@@ -63,7 +63,7 @@ function useRetoolProxy(
   }, [query?.isFetching])
 
   return (request: Request, resolve: (response: Response) => void) => {
-    getQueue.current.push({ request, resolve })
+    queue.current.push({ request, resolve })
     processQueue()
   }
 }
