@@ -1,10 +1,6 @@
 import type { PaymentCardEmbed } from '@foxy.io/elements'
 import type { FC } from 'react'
 
-// Why not @foxy.io/elements from node_modules? Short answer – it doesn't compile.
-// Not sure why this is happening, but in this project setup specifically esbuild crashes
-// with obscure errors when trying to bundle Elements installed locally. Luckily the official
-// CDN version works.
 import 'https://cdn-js.foxy.io/elements@1.47/foxy-payment-card-embed.js'
 
 import React, { useEffect, useRef } from 'react'

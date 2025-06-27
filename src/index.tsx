@@ -6,3 +6,5 @@ const base = 'https://cdn-js.foxy.io/elements@1.47/translations'
 I18nElement.onResourceFetch((ns, lang) => fetch(`${base}/${ns}/${lang}.json`))
 
 export { FoxyPaymentCardEmbed } from './FoxyPaymentCardEmbed'
+export { FoxyCustomerForm } from './FoxyCustomerForm'
+export { FoxyCartForm } from './FoxyCartForm'
